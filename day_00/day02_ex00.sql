@@ -72,12 +72,33 @@ SELECT pizzer_.name AS pizzeria_name FROM person AS pers_
 WHERE pers_.name = 'Dmitriy' AND pviz_.visit_date = '2022-01-08' AND m.price < 800
 ORDER BY pizzer_.name;
 
+-- 08 Please find the names of all males from Moscow or Samara cities who orders either
+-- pepperoni or mushroom pizzas (or both) . Please order the result by person name in descending mode.
+
+SELECT pers_.name FROM person AS pers_
+    JOIN person_order AS pers_o ON pers_.id = pers_o.person_id
+    JOIN menu AS m ON pers_o.menu_id = m.id
+    WHERE (pers_.address = 'Moscow' OR pers_.address = 'Samara') AND
+	(m.pizza_name = 'pepperoni pizza' OR m.pizza_name = 'mushroom pizza') AND
+	(pers_.gender = 'male')
+ORDER BY pers_.name DESC;
+
+-- 09 Please find the names of all females who ordered both pepperoni and cheese pizzas
+-- (at any time and in any pizzerias). Make sure that the result is ordered by person name.
+
+SELECT person_.name FROM person AS person_
+    JOIN person_order AS pers_o_ ON person_.id = pers_o_.person_id
+    JOIN menu AS menu_ ON pers_o_.menu_id = menu_.id
+WHERE (person_.gender = 'female') AND (menu_.pizza_name = 'pepperoni pizza' OR menu_.pizza_name = 'cheese pizza')
+GROUP BY person_.name;
+
+-- 10 Please find the names of persons who live on the same address. Make sure that the result
+-- is ordered by 1st person, 2nd person's name and common address. The  data sample is presented below.
 
 
-
-
-
-
+SELECT person_1.name AS person_name1, person_2.name AS person_name2, person_1.address AS common_address
+FROM person AS person_1 JOIN person AS person_2 ON person_1.address = person_2.address
+WHERE person_1.address = person_2.address AND person_1.id > person_2.id;
 
 
 
