@@ -44,8 +44,63 @@ pizzeria_2 as (select * from pizz_male except all select * from pizz_famele)
 select * from pizzeria_1 union all select * from pizzeria_2
 order by 1;
 
+-- 04 Please find a union of pizzerias that have orders either from women or  from men. Other words, you should
+-- find a set of pizzerias names have been ordered by females only and make "UNION" operation with set of pizzerias
+--names have been ordered by males only. Please be aware with word “only” for both genders. For any SQL operators
+--with sets don’t save duplicates (UNION, EXCEPT, INTERSECT).  Please sort a result by the pizzeria name.
 
+with pizz_famele as (select pizz_.name from person as person_
+    left join person_order as person_o on person_.id = person_o.person_id
+    left join menu as menu_ on menu_.id = person_o.menu_id		
+    left join pizzeria as pizz_ on pizz_.id = menu_.pizzeria_id 
+    where person_.gender = 'female'),
+pizz_male as (select pizz_.name from person as person_
+    left join person_order as person_o on person_.id = person_o.person_id
+    left join menu as menu_ on menu_.id = person_o.menu_id		
+    left join pizzeria as pizz_ on pizz_.id = menu_.pizzeria_id
+    where person_.gender = 'male'),
+pizzeria_1 as (select * from pizz_famele except select * from pizz_male),
+pizzeria_2 as (select * from pizz_male except select * from pizz_famele)
+select * from pizzeria_1 union select * from pizzeria_2
+order by 1;
 
+-- 05 Please write a SQL statement which returns a list of pizzerias which Andrey visited but did not make any orders.
+-- Please order by the pizzeria name.
+
+with vizit_andrey as(select pizz_.name from person as p
+    left join person_visits as person_v on p.id = person_v.person_id
+    left join pizzeria as pizz_ on pizz_.id = person_v.pizzeria_id
+where p.name = 'Andrey'),
+
+order_andrey as (select pizz_.name from person as p
+    left join person_order as person_o on p.id = person_o.person_id
+    left join menu as m on m.id = person_o.menu_id
+    left join pizzeria as pizz_ on pizz_.id = m.pizzeria_id
+where p.name = 'Andrey'),
+
+selection_pv as(select * from vizit_andrey except
+        select * from order_andrey),
+selection_po as(select * from order_andrey except
+        select * from vizit_andrey)
+select name as pizzeria_name from selection_pv
+union
+select name as pizzeria_name from selection_po
+order by pizzeria_name;
+
+-- 06 Please find the same pizza names who have the same price, but from different pizzerias.
+-- Make sure that the result is ordered by pizza name.
+
+with selection_pizza as (select menu_.pizza_name, pizz_.name, menu_.price, pizz_.id, menu_.pizzeria_id from menu as menu_
+	left join pizzeria as pizz_ on menu_.pizzeria_id = pizz_.id)
+select selpz_1.pizza_name, selpz_1.name, selpz_2.name, selpz_1.price from selection_pizza as selpz_1
+left join selection_pizza as selpz_2 on
+selpz_1.pizza_name = selpz_2.pizza_name and
+selpz_1.price = selpz_2.price
+
+where selpz_1.pizza_name = selpz_2.pizza_name and
+selpz_1.price = selpz_2.price and
+selpz_1.id > selpz_2.id
+order by 1;
 
 
 
