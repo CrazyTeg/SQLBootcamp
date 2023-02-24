@@ -102,9 +102,31 @@ selpz_1.price = selpz_2.price and
 selpz_1.id > selpz_2.id
 order by 1;
 
+-- 07 Please register a new pizza with name “greek pizza” (use id = 19) with price 800 rubles in “Dominos” restaurant (pizzeria_id = 2).
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+-- the initial database model with data from the link in the “Rules of the day” section.
 
+insert into menu (id, pizzeria_id, pizza_name, price)
+values (19, 2, 'greek pizza', 800);
 
+-- 08 Please register a new pizza with name “sicilian pizza” (whose id should be calculated by formula is
+-- “maximum id value + 1”) with a price of 900 rubles in “Dominos” restaurant (please use internal query to get
+--identifier of pizzeria).
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+--the initial database model with data from the link in the “Rules of the day” section and replay script from Exercise 07.
 
+insert into menu (id, pizzeria_id, pizza_name, price)
+values ((select max(id)+1 from menu), (select id from pizzeria where name = 'Dominos' ), 'sicilian pizza', 900);
+
+-- 09 Please register new visits into Dominos restaurant from Denis and Irina on 24th of February 2022.
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+--the initial database model with data from the link in the “Rules of the day” section and replay script from Exercises 07 and 08..
+
+insert into person_visits (id, person_id, pizzeria_id, visit_date)
+values ((select max(id) + 1 from person_visits), (select id from person where name = 'Denis'),
+	(select id from pizzeria where name = 'Dominos' ), '2022-02-24'),
+	((select max(id) + 2 from person_visits), (select id from person where name = 'Irina'),
+	(select id from pizzeria where name = 'Dominos' ), '2022-02-24');
 
 
 
