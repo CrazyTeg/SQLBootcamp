@@ -128,9 +128,45 @@ values ((select max(id) + 1 from person_visits), (select id from person where na
 	((select max(id) + 2 from person_visits), (select id from person where name = 'Irina'),
 	(select id from pizzeria where name = 'Dominos' ), '2022-02-24');
 
+-- 10 Please register new orders from Denis and Irina on 24th of February 2022 for the new menu with “sicilian pizza”.
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+-- the initial database model with data from the link in the “Rules of the day” section and replay script from
+-- Exercises 07 , 08 and 09.
 
+insert into person_order (id, person_id, menu_id, order_date)
+values ((select max(id) + 1 from person_order), (select id from person where name = 'Denis'),
+	    (select id from menu where pizza_name = 'sicilian pizza' ), '2022-02-24'),
+	((select max(id) + 2 from person_order ), (select id from person where name = 'Irina'),
+		(select id from menu where pizza_name = 'sicilian pizza' ), '2022-02-24');
 
+-- 11 Please change the price for “greek pizza” on -10% from the current value.
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+--the initial database model with data from the link in the “Rules of the day” section and replay script from Exercises 07 , 08 ,09 and 10.
 
+update menu set price = price * 0.9 WHERE pizza_name = 'greek pizza';
 
+-- 12
+-- Don’t use window functions like ROW_NUMBER( )
+-- Don’t use atomic INSERT statements |
 
+-- Please register new orders from all persons for “greek pizza” by 25th of February 2022.
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+-- the initial database model with data from the link in the “Rules of the day” section and replay script from Exercises 07 , 08 ,09 , 10 and 11.
+
+insert into person_order (id, person_id, menu_id, order_date)
+select value as id, p.id as person_id,
+	(select id from menu as menu_ where menu_.pizza_name = 'greek pizza') as menu_id, '2022-02-25' as order_date
+	from generate_series((select max(id) + 1 from person_order),
+	(select max(id) from person) + (select max(id) from person_order)) as value
+	join person as p on p.id + (SELECT max(id) FROM person_order) = value;
+
+-- 13 Please write 2 SQL (DML) statements that delete all new orders from exercise #12 based on order date. Then delete “greek pizza” from the menu.
+-- Warning: this exercise will probably be the cause  of changing data in the wrong way. Actually, you can restore
+-- the initial database model with data from the link in the “Rules of the day” section and replay script from
+-- Exercises 07 , 08 ,09 , 10 , 11, 12 and 13.
+
+delete from person_order
+where menu_id = (select id from menu where pizza_name = 'greek pizza') and
+order_date = '2022-02-25';
+delete from menu where pizza_name = 'greek pizza';
 
