@@ -42,9 +42,45 @@ union
 select person_id from (select person_id from S except select person_id from R) as sel_s
 order by 1
 
+-- 05 Please create a Database View v_price_with_discount that returns a person's orders with person names,
+-- pizza names, real price and calculated column discount_price (with applied 10% discount and satisfies
+-- formula price - price*0.1). The result please sort by person name and pizza name and make a round for discount_price column to integer type.
 
+create view v_price_with_discount as
+	(select pers_.name, menu_.pizza_name, menu_.price, round(menu_.price - menu_.price * 0.1) 
+	from person as pers_ left join person_order as person_o on pers_.id = person_id
+	left join menu as menu_ on menu_.id = person_o.menu_id)
+order by pers_.name, menu_.pizza_name;
 
+-- 06 Please create a Materialized View mv_dmitriy_visits_and_eats (with data included) based on SQL statement that finds
+-- the name of pizzeria Dmitriy visited on January 8, 2022 and could eat pizzas for less than 800 rubles (this SQL you can find out at Day #02 Exercise #07).
+-- To check yourself you can write SQL to Materialized View mv_dmitriy_visits_and_eats and compare results with your previous query.
 
+create MATERIALIZED view mv_dmitriy_visits_and_eats as(
+    select pizz_.name as pizzeria_name from person as pers_
+	join person_visits as person_v on pers_.id = person_v.person_id
+	join pizzeria as pizz_ on pizz_.id = person_v.pizzeria_id
+	join menu as menu_ on menu_.pizzeria_id = person_v.pizzeria_id
+	where pers_.name = 'Dmitriy' and person_v.visit_date = '2022-01-08' and menu_.price < 800);
+
+-- 07 Let's refresh data in our Materialized View mv_dmitriy_visits_and_eats from exercise #06. Before this action,
+-- please generate one more Dmitriy visit that satisfies the SQL clause of Materialized View except pizzeria that we can see in a result from exercise #06.
+-- After adding a new visit please refresh a state of data for mv_dmitriy_visits_and_eats.
+
+insert into person_visits (id, person_id, pizzeria_id, visit_date)
+values ((select max(id) from person_visits)+1, (select id from person where name = 'Dmitriy'),
+	(select pers_.id from menu as menu_ left join pizzeria as pers_ on menu_.pizzeria_id = pers_.id
+	left join mv_dmitriy_visits_and_eats as eat on true
+	where eat.pizzeria_name != pers_.name and menu_.price < 800 limit 1), '2022-01-08');
+refresh MATERIALIZED view mv_dmitriy_visits_and_eats;
+
+-- 08 After all our exercises were born a few Virtual Tables and one Materialized View. Let’s drop them!
+
+drop MATERIALIZED view mv_dmitriy_visits_and_eats;
+drop view v_persons_female,
+    v_persons_male, v_generated_dates,
+    v_symmetric_union,
+    v_price_with_discount;
 
 
 
