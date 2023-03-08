@@ -1,2 +1,2 @@
 # SQLBootcamp
-SQL Boot camp
+SQL шпаргалка
