@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\day_04",
     "\\day_05"
   ],
-  "SelectedNode": "\\day_05\\day05_ex00.sql",
+  "SelectedNode": "\\day_05\\model.sql",
   "PreviewInSolutionExplorer": false
 }
