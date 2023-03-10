@@ -54,5 +54,19 @@ join menu as menu_ on menu_.pizzeria_id = pd.pizzeria_id
 join pizzeria as pz on menu_.pizzeria_id = pz.id
 order by p.name, menu_.pizza_name
 
+-- 03 Actually, we have to make improvements to data consistency from one side and performance tuning from the other side.
+-- Please create a multicolumn unique index (with name idx_person_discounts_unique) that prevents duplicates of pair values person and pizzeria identifiers.
+-- After creation of a new index, please provide any simple SQL statement that shows proof of index usage (by using EXPLAIN ANALYZE).
+-- The example of “proof” is below
+-- ...
+--   Index Scan using idx_person_discounts_unique on person_discounts
+-- ...
+
+set enable_bitmapscan  = off;
+set enable_seqscan = off;
+create unique index idx_person_discounts_unique on person_discounts (person_id, pizzeria_id);
+explain analyze select person_id, pizzeria_id from person_discounts
+
+
 
 
