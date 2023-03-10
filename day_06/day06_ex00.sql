@@ -43,4 +43,16 @@ from person_order as person_o
 left join menu as menu_ on menu_.id = person_o.menu_id
 group by person_o.person_id, menu_.pizzeria_id;
 
-select * from person_discounts
+select * from person_discounts;
+
+-- 02 Please write a SQL statement that returns orders with actual price and price with applied discount
+-- for each person in the corresponding pizzeria restaurant and sort by person name, and pizza name.
+
+select p.name, menu_.pizza_name, menu_.price, round(menu_.price - (menu_.price * (pd.discount/100)), 0) as discount_price, pz.name
+from person_discounts as pd join person as p on pd.person_id = p.id
+join menu as menu_ on menu_.pizzeria_id = pd.pizzeria_id
+join pizzeria as pz on menu_.pizzeria_id = pz.id
+order by p.name, menu_.pizza_name
+
+
+
