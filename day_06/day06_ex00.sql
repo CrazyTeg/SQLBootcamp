@@ -81,6 +81,17 @@ add constraint ch_nn_pizzeria_id check (pizzeria_id is not null),
 add constraint ch_nn_discount check (discount is not null),
 alter discount set default 0, add constraint ch_range_discount check (discount between 0 and 100);
 
+-- 05 To satisfy Data Governance Policies need to add comments for the table and table's columns.
+-- Let’s apply this policy for the person_discounts table.
+-- Please add English or Russian comments (it's up to you) that explain what is a business goal of a table and all included attributes.
+
+comment on table person_discounts is 'Таблица для персональных скидок клиентам';
+comment on column person_discounts.id is 'Индификационный номер для каждой из строк';
+comment on column person_discounts.person_id is 'Индификационный номер для клиента';
+comment on column person_discounts.pizzeria_id is 'Индификационный номер для пиццы';
+comment on column person_discounts.discount is 'Персональная скидка для клиента';
+
+
 
 
 
